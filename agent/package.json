@@ -1,0 +1,22 @@
+{
+  "name": "revue-agent",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "revue — TypeScript code reviewer GitHub App (plumbing; no AI yet)",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "start": "tsx src/index.ts",
+    "typecheck": "tsc --noEmit",
+    "db:init": "tsx src/db/init.ts"
+  },
+  "dependencies": {
+    "@octokit/webhooks": "^14.2.0",
+    "dotenv": "^17.4.2"
+  },
+  "devDependencies": {
+    "@types/node": "^26.0.0",
+    "tsx": "^4.22.4",
+    "typescript": "^6.0.3"
+  }
+}

@@ -1,0 +1,8 @@
+# OS
+.DS_Store
+
+# Dependencies / build artifacts are also ignored via per-package .gitignore files
+node_modules/
+.next/
+.vercel
+*.tsbuildinfo

@@ -1,0 +1,82 @@
+// Notable — minimal note editor with AI summarize.
+
+import React, { useCallback, useEffect, useState } from "react";
+import type { Block, Note } from "./types";
+import { handleGetNote, handleSummarizeNote, handleUpdateNote } from "./api";
+
+interface NoteEditorProps {
+  noteId: string;
+}
+
+export function NoteEditor({ noteId }: NoteEditorProps) {
+  const [note, setNote] = useState<Note | null>(null);
+  const [summary, setSummary] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    handleGetNote(noteId).then((res) => {
+      if (active && res.ok && res.data) setNote(res.data);
+    });
+    return () => {
+      active = false;
+    };
+  }, [noteId]);
+
+  const updateBlock = useCallback((blockId: string, text: string) => {
+    setNote((prev) => {
+      if (!prev) return prev;
+      const blocks = prev.blocks.map((b) =>
+        b.id === blockId ? { ...b, text } : b,
+      );
+      return { ...prev, blocks };
+    });
+  }, []);
+
+  const save = useCallback(async () => {
+    if (!note) return;
+    setSaving(true);
+    const res = await handleUpdateNote(note.id, { blocks: note.blocks });
+    if (res.ok && res.data) setNote(res.data);
+    setSaving(false);
+  }, [note]);
+
+  const summarize = useCallback(async () => {
+    const res = await handleSummarizeNote(noteId);
+    if (res.ok && res.data) setSummary(res.data);
+  }, [noteId]);
+
+  if (!note) return <div className="note-editor note-editor--loading">Loading…</div>;
+
+  return (
+    <div className="note-editor">
+      <input
+        className="note-editor__title"
+        value={note.title}
+        onChange={(e) =>
+          setNote((prev) => (prev ? { ...prev, title: e.target.value } : prev))
+        }
+      />
+
+      <div className="note-editor__blocks">
+        {note.blocks.map((block: Block) => (
+          <textarea
+            key={block.id}
+            className="note-editor__block"
+            value={block.text}
+            onChange={(e) => updateBlock(block.id, e.target.value)}
+          />
+        ))}
+      </div>
+
+      <div className="note-editor__actions">
+        <button onClick={save} disabled={saving}>
+          {saving ? "Saving…" : "Save"}
+        </button>
+        <button onClick={summarize}>Summarize with AI</button>
+      </div>
+
+      {summary && <div className="note-editor__summary">{summary}</div>}
+    </div>
+  );
+}

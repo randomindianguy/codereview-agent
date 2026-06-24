@@ -1,0 +1,15 @@
+# dependencies
+node_modules/
+
+# secrets / config
+.env
+*.pem
+
+# local SQLite database
+*.db
+*.db-wal
+*.db-shm
+
+# misc
+.DS_Store
+*.tsbuildinfo

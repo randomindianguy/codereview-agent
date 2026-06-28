@@ -10,4 +10,7 @@ export const config = {
   webhookPath: process.env.WEBHOOK_PATH ?? "/api/webhook",
   webhookSecret: process.env.GITHUB_WEBHOOK_SECRET ?? "",
   databasePath: process.env.DATABASE_PATH ?? "revue.db",
+  // Optional: raises the GitHub REST rate limit for listing PR files.
+  // Listing works unauthenticated on a public repo, so this is not required.
+  githubToken: process.env.GITHUB_TOKEN ?? "",
 };

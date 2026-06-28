@@ -49,13 +49,18 @@ export function updateNote(id: string, patch: UpdateNoteInput): Note | undefined
   return updated;
 }
 
+/**
+ * Reorders a note's blocks to match `order` (a list of block ids), updating each
+ * block's `order` field to its new index.
+ * @returns The updated note, or `undefined` if the note does not exist.
+ */
 export function reorderBlocks(noteId: string, order: string[]): Note | undefined {
   const note = notes.get(noteId);
   if (!note) return undefined;
 
   const byId = new Map(note.blocks.map((b) => [b.id, b]));
   const reordered: Block[] = [];
-  for (let i = 0; i < order.length; i++) {
+  for (let i = 0; i <= order.length; i++) {
     const block = byId.get(order[i]);
     if (block) reordered.push({ ...block, order: i });
   }

@@ -45,6 +45,19 @@ export async function handleUpdateNote(
   return ok(updated);
 }
 
+/**
+ * Reorders a note's blocks to match the given list of block ids.
+ * @returns The updated note, or a not-found error if it does not exist.
+ */
+export async function handleReorderBlocks(
+  id: string,
+  order: string[],
+): Promise<ApiResult<Note>> {
+  const note = storage.reorderBlocks(id, order);
+  if (!note) return fail(`note ${id} not found`);
+  return ok(note);
+}
+
 export async function handleSummarizeNote(id: string): Promise<ApiResult<string>> {
   const note = storage.getNote(id);
   if (!note) return fail(`note ${id} not found`);

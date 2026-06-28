@@ -49,6 +49,19 @@ export function updateNote(id: string, patch: UpdateNoteInput): Note | undefined
   return updated;
 }
 
+/**
+ * Marks a note as archived so it no longer appears in {@link listNotes} results.
+ * @param id - The id of the note to archive.
+ * @returns The updated note, or `undefined` if no note has that id.
+ */
+export function archiveNote(id: string): Note | undefined {
+  const existing = notes.get(id);
+  if (!existing) return undefined;
+  const updated: Note = { ...existing, archived: true, updatedAt: Date.now() };
+  notes.set(id, updated);
+  return updated;
+}
+
 export function reorderBlocks(noteId: string, order: string[]): Note | undefined {
   const note = notes.get(noteId);
   if (!note) return undefined;

@@ -1,6 +1,6 @@
 // Notable — minimal note editor with AI summarize.
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import type { Block, Note } from "./types";
 import { handleGetNote, handleSummarizeNote, handleUpdateNote } from "./api";
 
@@ -8,10 +8,25 @@ interface NoteEditorProps {
   noteId: string;
 }
 
+function blockToMarkdown(block: Block): string {
+  if (block.type === "heading") {
+    return "# " + block.text;
+  } else {
+    if (block.type === "todo") {
+      return block.checked ? "- [x] " + block.text : "- [ ] " + block.text;
+    } else if (block.type === "code") {
+      return "```\n" + block.text + "\n```";
+    } else {
+      return block.text;
+    }
+  }
+}
+
 export function NoteEditor({ noteId }: NoteEditorProps) {
   const [note, setNote] = useState<Note | null>(null);
   const [summary, setSummary] = useState("");
   const [saving, setSaving] = useState(false);
+  const [exported, setExported] = useState("");
 
   useEffect(() => {
     let active = true;
@@ -46,6 +61,13 @@ export function NoteEditor({ noteId }: NoteEditorProps) {
     if (res.ok && res.data) setSummary(res.data);
   }, [noteId]);
 
+  const exportMarkdown = () => {
+    if (!note) return;
+    const body = note.blocks.map(blockToMarkdown).join("\n\n");
+    let md = "# " + note.title + "\n\n" + body;
+    setExported(md);
+  };
+
   if (!note) return <div className="note-editor note-editor--loading">Loading…</div>;
 
   return (
@@ -74,9 +96,11 @@ export function NoteEditor({ noteId }: NoteEditorProps) {
           {saving ? "Saving…" : "Save"}
         </button>
         <button onClick={summarize}>Summarize with AI</button>
+        <button onClick={exportMarkdown}>Export Markdown</button>
       </div>
 
       {summary && <div className="note-editor__summary">{summary}</div>}
+      {exported && <pre className="note-editor__export">{exported}</pre>}
     </div>
   );
 }

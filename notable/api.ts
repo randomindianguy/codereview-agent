@@ -1,6 +1,6 @@
 // Notable — request handlers. Framework-agnostic (plain async functions).
 
-import type { ApiResult, CreateNoteInput, Note, UpdateNoteInput } from "./types";
+import type { ApiResult, CreateNoteInput, Note, NoteUpdate, UpdateNoteInput } from "./types";
 import * as storage from "./storage";
 import { AIClient } from "./aiClient";
 import { collectStream } from "./streaming";
@@ -43,6 +43,20 @@ export async function handleUpdateNote(
   const updated = storage.updateNote(id, patch);
   if (!updated) return fail(`note ${id} not found`);
   return ok(updated);
+}
+
+/**
+ * Saves a batch of note edits in a single call.
+ * @param updates - The notes to save, each with its id and patch.
+ * @returns A summary with the number of notes saved.
+ */
+export async function handleBatchSaveNotes(
+  updates: NoteUpdate[],
+): Promise<ApiResult<{ saved: number }>> {
+  for (const { id, patch } of updates) {
+    handleUpdateNote(id, patch);
+  }
+  return ok({ saved: updates.length });
 }
 
 export async function handleSummarizeNote(id: string): Promise<ApiResult<string>> {

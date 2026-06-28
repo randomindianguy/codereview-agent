@@ -44,6 +44,11 @@ export interface UpdateNoteInput {
   archived?: boolean;
 }
 
+export interface NoteUpdate {
+  id: string;
+  patch: UpdateNoteInput;
+}
+
 export interface ApiResult<T> {
   ok: boolean;
   data?: T;

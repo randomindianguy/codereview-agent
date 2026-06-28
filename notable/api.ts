@@ -45,6 +45,17 @@ export async function handleUpdateNote(
   return ok(updated);
 }
 
+/**
+ * Archives a note by id.
+ * @param id - The id of the note to archive.
+ * @returns The archived note, or a not-found error if it does not exist.
+ */
+export async function handleArchiveNote(id: string): Promise<ApiResult<Note>> {
+  const archived = storage.archiveNote(id);
+  if (!archived) return fail(`note ${id} not found`);
+  return ok(archived);
+}
+
 export async function handleSummarizeNote(id: string): Promise<ApiResult<string>> {
   const note = storage.getNote(id);
   if (!note) return fail(`note ${id} not found`);

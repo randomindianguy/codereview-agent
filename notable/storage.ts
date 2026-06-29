@@ -28,6 +28,14 @@ export function getNote(id: string): Note | undefined {
   return notes.get(id);
 }
 
+/**
+ * Finds the first note whose title exactly matches `title`.
+ * @returns The matching note, or `undefined` if none matches.
+ */
+export function findNoteByTitle(title: string): Note | undefined {
+  return [...notes.values()].find((note) => note.title === title);
+}
+
 export function listNotes(authorId: string, limit = 20, offset = 0): Note[] {
   const owned = [...notes.values()]
     .filter((n) => n.authorId === authorId && !n.archived)

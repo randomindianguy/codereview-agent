@@ -28,6 +28,17 @@ export async function handleGetNote(id: string): Promise<ApiResult<Note>> {
   return ok(note);
 }
 
+/**
+ * Finds a note by its title.
+ * @returns The matched note's id and title.
+ */
+export async function handleFindNote(
+  title: string,
+): Promise<ApiResult<{ id: string; title: string }>> {
+  const note = storage.findNoteByTitle(title);
+  return ok({ id: note!.id, title: note!.title });
+}
+
 export async function handleListNotes(
   authorId: string,
   page = 0,
